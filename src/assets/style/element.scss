@@ -1,0 +1,8 @@
+$--color-primary: #f84949;
+$--color-primary-hover: #ff6d4b;
+ .el-button--primary{
+    background-color: $--color-primary!important;
+ }
+ .el-button--primary:hover{
+   background-color: $--color-primary-hover!important;
+}

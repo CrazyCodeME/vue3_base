@@ -1,0 +1,35 @@
+.login-form{
+  .el-form-item{
+    .el-form-item__content{
+      position: relative;
+      .el-input{
+        width: 340px;
+        height: 56px;
+        .el-input__wrapper{
+          padding: 0 16px;
+          .el-input__inner{
+            height: 56px;
+            line-height: 56px;
+          }
+        }
+      }
+      .input-label{
+        position: absolute;
+        font-size: 14px;
+        padding: 0 2px;
+        top: 8px;
+        left: 16px;
+        color: #999;
+        transform: translate(0 ,10px);
+        user-select: none;
+        pointer-events: none;
+        line-height: 1.5;
+      }
+      .move-top{
+        color: #2196f3;
+        font-size: 12px;
+        transform: translate(0,0);
+      }
+    }
+  }
+}

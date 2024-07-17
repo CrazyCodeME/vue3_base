@@ -1,11 +1,18 @@
+import { Layout } from '@/layout';
 const routes = [
   {
-    path: '/login',
-    component: () => import('@/system/login.vue'),
-  },
-  {
-    path: '/:pathMatch(.*)*',
-    component: () => import('@/system/404.vue'),
+    path: '/',
+    name: 'root',
+    redirect: () => {
+      return '/';
+    },
+    component: Layout,
+    children: [
+      {
+        path: '/',
+        component: () => import('@/views/system/index.vue'),
+      },
+    ],
   },
 ];
 export default routes;
