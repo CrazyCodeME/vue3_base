@@ -1,8 +1,24 @@
 $--color-primary: #f84949;
+$--color-primary-border: #de2223;
 $--color-primary-hover: #ff6d4b;
+$--color-success: #1f81e8;
+$--color-success-border: #1f81e8;
+$--color-success-hover: #1a65b3;
+
  .el-button--primary{
     background-color: $--color-primary!important;
+    border: 1px solid $--color-primary-border!important;
  }
  .el-button--primary:hover{
    background-color: $--color-primary-hover!important;
 }
+.el-button--success{
+   background-color: $--color-success!important;
+   border: 1px solid $--color-success-border!important;
+}
+.el-button--success:hover{
+  background-color: $--color-success-hover!important;
+}
+.el-link.is-disabled{
+   color: #888!important;
+ }

@@ -28,7 +28,7 @@
       </el-popover>
     </div>
     <div class="login" @click="openDialog">登录/注册</div>
-    <UserDialog v-model="showLogin"></UserDialog>
+    <UserDialog v-model="showLogin" @login="login"></UserDialog>
   </div>
 </template>
 
@@ -36,6 +36,7 @@
 import { ArrowDown } from '@element-plus/icons-vue';
 import UserDialog from './user-dialog.vue';
 import { ref } from 'vue';
+import { Any } from '@/types';
 let showLogin = ref(false);
 const menuList = [
   {
@@ -97,6 +98,9 @@ const menuList = [
 ];
 const openDialog = () => {
   showLogin.value = true;
+};
+const login = (e:Any) => {
+  console.log(e)
 };
 </script>
 

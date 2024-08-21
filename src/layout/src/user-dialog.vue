@@ -38,21 +38,54 @@
         </div>
       </div>
       <div class="content-right">
-        <el-icon size="24"><Close /></el-icon>
-        <h4>登录</h4>
+        <el-icon size="24" @click="emit('close')"><Close /></el-icon>
+        <h4>{{ isLogin ? '登录' : '注册' }}</h4>
         <el-form ref="loginForm" :model="form" class="login-form">
           <el-form-item prop="username">
-            <el-input v-model="form.username"></el-input>
-            <span class="input-label" :class="form.username ? 'move-top' : ''">手机号/用户名</span>
+            <el-input v-model="form.username" :class="form.username ? 'is-input' : ''"></el-input>
+            <span class="input-label" :class="form.username ? 'move-top' : ''">{{
+              isLogin ? '手机号/用户名' : '手机号'
+            }}</span>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input v-model="form.password" show-password type="password"></el-input>
-            <span class="input-label" :class="form.password ? 'move-top' : ''">手机号/用户名</span>
+            <el-input
+              v-model="form.password"
+              show-password
+              type="password"
+              :class="form.password ? 'is-input' : ''"
+            ></el-input>
+            <span class="input-label" :class="form.password ? 'move-top' : ''">密码</span>
           </el-form-item>
           <el-form-item v-if="!isLogin" prop="smsCode">
-            <el-input v-model="form.smsCode"></el-input>
+            <el-input v-model="form.smsCode"  maxlength="6" :class="form.smsCode ? 'is-input' : ''">
+              <template #suffix
+                ><el-link class="smscode" type="primary" :underline="false" :disabled="!canGet" @click="getSms">{{
+                  hasGet ? `${timeout}` : '获取验证码'
+                }}</el-link></template
+              >
+            </el-input>
+            <span class="input-label" :class="form.smsCode ? 'move-top' : ''">验证码</span>
           </el-form-item>
+          <el-form-item v-if="!isLogin">
+            <div class="protocol">
+              <el-checkbox v-model="agree"> </el-checkbox>本人确认已仔细阅读并充分理解<el-link type="primary"
+                >《网站隐私政策》</el-link
+              >的全部内容，同意接受上述协议的全部内容
+            </div>
+          </el-form-item>
+          <el-form-item>
+            <el-button v-if="isLogin" type="primary" @click="emit('login', form)">登录</el-button>
+            <el-button v-else type="primary" :disabled="disabled" @click="emit('register', form)">注册</el-button>
+          </el-form-item>
+          <el-link v-if="isLogin">忘记密码？</el-link>
         </el-form>
+        <div class="bottom-register">
+          <div v-if="isLogin">
+            <span class="tip">还没有账号？</span>
+            <el-button type="success" @click="changeLogin(false)">注册</el-button>
+          </div>
+          <div v-else>已有账号？<el-link type="primary" @click="isLogin = true">立即登录</el-link></div>
+        </div>
       </div>
     </div>
   </el-dialog>
@@ -66,22 +99,53 @@ export default {
 <script setup lang="ts">
 import { QuestionFilled } from '@element-plus/icons-vue';
 import { Close } from '@element-plus/icons-vue';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
+import { Any } from '@/types';
+import { login, register, getSmsCode } from '@/api/user';
 const props = defineProps({
   showLogin: {
     type: Boolean,
     default: false,
   },
 });
+let agree = ref(false);
+let hasGet = ref(false);
+let timeout = ref(60);
+const disabled = computed(() => {
+  return form.username && form.password && form.smsCode && agree && !isLogin;
+});
+const canGet = computed(() => {
+  return form.username && !hasGet.value;
+});
 let form = reactive({
   username: '',
   password: '',
   smsCode: '',
 });
+let timer: Any = null;
 let isLogin = ref(true);
-const emit = defineEmits(['update:modelValue', 'confirm', 'cancel', 'close', 'close-hook']);
+const emit = defineEmits(['update:modelValue', 'login', 'register', 'close', 'close-hook']);
 const close = () => {
   emit('update:modelValue', false);
+};
+const changeLogin = (val: boolean) => {
+  isLogin.value = val;
+};
+const getSms = () => {
+  if (hasGet.value) return;
+
+  getSmsCode({ mobilePhone: form.username }).then((res) => {
+    console.log(res);
+    hasGet.value = true;
+    timer = setInterval(() => {
+      timeout.value--;
+      if (timeout.value <= 0) {
+        hasGet.value = false;
+        timeout.value = 60;
+        clearInterval(timer);
+      }
+    }, 1000);
+  });
 };
 </script>
 <style lang="scss">
@@ -96,91 +160,6 @@ const close = () => {
   }
   .el-dialog__body {
     height: 100%;
-    .dialog-body {
-      display: flex;
-      height: 100%;
-      .content-left {
-        width: 46%;
-        position: relative;
-        background-size: cover;
-        background-color: #eee;
-        overflow: hidden;
-        .bg {
-          background-image: url('https://vcg00.cfp.cn/static/img/demo/lg_bg_0403.png');
-          background-size: cover;
-          background-position: center;
-          background-color: #f23b3b;
-          background-repeat: no-repeat;
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          inset: 0;
-          transition: all 0.3s ease;
-        }
-        .bg:hover {
-          animation: myScale 1s linear forwards;
-        }
-        .font {
-          color: #fff;
-          text-align: center;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          .text {
-            font-size: 18px;
-            line-height: 24px;
-            margin-bottom: 24px;
-          }
-          .text1 {
-            font-size: 28px;
-            line-height: 32px;
-            display: flex;
-            align-items: flex-end;
-            margin-bottom: 24px;
-            strong {
-              display: inline-block;
-              font-size: 0;
-              width: 186px;
-              height: 126px;
-              background-image: url('//vcg00.cfp.cn/static/img/demo/lg_t30.png');
-              background-size: contain;
-              background-position: center;
-              background-repeat: no-repeat;
-              margin-right: 4px;
-            }
-          }
-        }
-      }
-      .content-right {
-        padding: 40px;
-        min-height: 520px;
-        position: relative;
-        flex: 1 1;
-        .el-icon {
-          position: absolute;
-          top: 30px;
-          right: 30px;
-          cursor: pointer;
-        }
-        h4 {
-          margin: 0;
-          line-height: 1.4;
-          font-size: 30px;
-          padding: 15px 0 15px;
-        }
-        .login-form {
-          .el-form-item {
-            .el-form-item__content {
-              .el-input {
-                width: 340px;
-                height: 56px;
-              }
-            }
-          }
-        }
-      }
-    }
   }
 }
 .rule {
@@ -189,14 +168,6 @@ const close = () => {
   font-size: 13px;
   .el-popper__arrow:before {
     background: rgba($color: #000000, $alpha: 0.75) !important;
-  }
-}
-@keyframes myScale {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.05);
   }
 }
 </style>

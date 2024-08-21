@@ -71,7 +71,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import * as userApi from '@/api/user';
-import { ArrowDown, CameraFilled, Search } from '@element-plus/icons-vue';
+import { ArrowDown } from '@element-plus/icons-vue';
+import { CameraFilled } from '@element-plus/icons-vue';
+import { Search } from '@element-plus/icons-vue';
 const types = [
   {
     text: '搜图片',
@@ -119,7 +121,7 @@ const test = () => {
 
 <style scoped lang="scss">
 .home {
-  background-image: url('https://vcg00.cfp.cn/cms/image/image/d60e5ecf11b14f9bba4be63cd9b8440a.jpg');
+  background-image: url('https://vcg00.cfp.cn/cms/image/image/6539545b67f744338b01ff6992092236.jpg');
   width: 100%;
   min-height: 100vh;
   position: relative;
